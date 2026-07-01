@@ -5,7 +5,7 @@ from ingestion.loaders import files_process
 from ingestion.splitter import chunking
 from ingestion.embeddings import vectors
 from ingestion.embedding_model import embeddings
-from retrieval.retriever import retrieve
+from retrieval.prompt_response import prompt_template
 
 st.set_page_config(
     page_title="PDF RAG Chatbot",
@@ -38,10 +38,7 @@ if files:
 
     if question:
 
-        result = retrieve(question)
-    
-        for doc in result:
-    
-            st.write(doc.page_content)
+        response = prompt_template(question)
 
+        st.write(response)
 
