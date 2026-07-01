@@ -7,6 +7,14 @@ from ingestion.embeddings import vectors
 from ingestion.embedding_model import embeddings
 from retrieval.prompt_response import prompt_template
 
+from langchain_core.messages import (
+    HumanMessage,
+    AIMessage
+)
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+    
 st.set_page_config(
     page_title="PDF RAG Chatbot",
     page_icon="📄",
@@ -24,7 +32,7 @@ files = st.file_uploader(
     accept_multiple_files=True
 )
 
-
+history = []
 
 question = st.chat_input("Enter your Question:")
 
@@ -37,8 +45,14 @@ if files:
     vectors(chunks)
 
     if question:
+        
+        history = st.session_state.messages[-6:]
 
-        response = prompt_template(question)
+        response = prompt_template(question,history)
 
-        st.write(response)
+        st.session_state.messages.append( HumanMessage(content=question) )
+        st.session_state.messages.append( AIMessage(content=response.content) )
+
+        st.write(response.content)
+
 

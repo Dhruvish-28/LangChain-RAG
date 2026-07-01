@@ -2,7 +2,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from .retriever import retrieve
 from .llm_model import llm
 
-def prompt_template(question):
+def prompt_template(question , history):
 
     docs = retrieve(question)
 
@@ -27,6 +27,11 @@ Keep answers concise.
         ),
 
         (
+        "placeholder",
+        "{history}"
+        ),
+
+        (
             "human",
             """
 Context:
@@ -41,6 +46,7 @@ Question:
 
     prompt = template.invoke(
     {
+        "history" : history,
         "context": context,
         "question": question
     }
