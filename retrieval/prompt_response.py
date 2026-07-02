@@ -4,7 +4,7 @@ from .llm_model import llm
 
 def prompt_template(question , history):
 
-    docs = retrieve(question)
+    docs = retrieve(question , history)
 
     context = "\n\n".join( doc.page_content for doc in docs )
 
