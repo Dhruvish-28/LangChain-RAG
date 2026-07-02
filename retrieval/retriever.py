@@ -13,8 +13,12 @@ def retrieve(question, history):
     )
 
     retriever = vectorstore.as_retriever(
-    search_type = "similarity",
-    search_kwargs={"k": 3}
+    search_type="mmr",
+    search_kwargs={
+        "k": 3,
+        "fetch_k": 20,
+        "lambda_mult": 0.5
+        }
     )
 
     rephrase_prompt = ChatPromptTemplate.from_messages(
