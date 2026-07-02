@@ -48,7 +48,7 @@ if files:
         
         history = st.session_state.messages[-6:]
 
-        response = prompt_template(question,history)
+        response = prompt_template(question,history,chunks)
 
         st.session_state.messages.append( HumanMessage(content=question) )
         st.session_state.messages.append( AIMessage(content=response.content) )
