@@ -1,25 +1,22 @@
-from langchain_community.vectorstores import FAISS
-from ingestion.embedding_model import embeddings
 from langchain_classic.chains import create_history_aware_retriever
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from .llm_model import llm
+from .ensemble_retriever import combine_retriever
+from models.llm_model import llm
+from models.transformer import reranker 
 
-def retrieve(question, history):
+def ranking(docs , question) :
+    
+    pairs = [ (question, doc.page_content) for doc in docs]
 
-    vectorstore = FAISS.load_local(
-    "vector_db",
-    embeddings,
-    allow_dangerous_deserialization=True
-    )
+    scores = reranker.predict(pairs)
 
-    retriever = vectorstore.as_retriever(
-    search_type="mmr",
-    search_kwargs={
-        "k": 3,
-        "fetch_k": 20,
-        "lambda_mult": 0.5
-        }
-    )
+    ranked = sorted( zip(scores, docs), key=lambda x: x[0], reverse=True )    
+
+    docs = [ doc for _, doc in ranked[:6]]
+
+    return docs
+    
+def retrieve(question, history , chunks):
 
     rephrase_prompt = ChatPromptTemplate.from_messages(
     [
@@ -48,6 +45,8 @@ return it unchanged.
     ]
 )
 
+    retriever = combine_retriever(chunks)    
+
     history_aware_retriever = create_history_aware_retriever(llm , retriever , rephrase_prompt)
 
     result = history_aware_retriever.invoke(
@@ -56,5 +55,7 @@ return it unchanged.
             "chat_history" : history
         }
     )
+
+    result = ranking(result  , question)
 
     return result
