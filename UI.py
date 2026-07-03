@@ -9,7 +9,8 @@ from langchain_core.messages import (
     HumanMessage,
     AIMessage
 )
-
+from langchain_google_genai.chat_models import ChatGoogleGenerativeAIError
+import shutil
 import time
 import os
 
@@ -57,6 +58,14 @@ def metadata(docs):
          sources.add(os.path.basename(doc.metadata.get("source", "Unknown")))
 
     return list(sources)
+
+def stream_text(text):
+
+    for word in text.split():
+
+        yield word + " "
+
+        time.sleep(0.03)
     
 def display_chat():
 
@@ -72,22 +81,6 @@ def display_chat():
             with st.chat_message("assistant"):
     
                 st.write(message["content"])
-    
-                # with st.expander("Metadata"):
-    
-                #     st.write("**Sources:**")
-                #     for source in message["sources"]:
-                #         st.write(f"• {source}")
-
-                #     total_time = message["total_time"]
-                #     st.write(f"**Time:** {total_time} sec")
-
-                #     st.write("**Tokens:**")
-                #     tokens = message["tokens"]
-
-                #     st.write(f"Input Tokens : {tokens['input_tokens']}")
-                #     st.write(f"Output Tokens : {tokens['output_tokens']}")
-                #     st.write(f"Total Tokens : {tokens['total_tokens']}")
 
                 with st.expander("Metadata"):
 
@@ -110,33 +103,26 @@ def display_chat():
                         st.write(f"Total : {tokens['total_tokens']}")
 
 
-def generate_response(question):
-
-    history = st.session_state.messages[-6:]
+def generate_response(question, history):
 
     start_time = time.time()
+
+    with st.chat_message("assistant"):
         
-    response , docs = prompt_template(
-        question,
-        history,
-        st.session_state.chunks
-    )
-    st.write("reponse generated")
+        with st.spinner("Thinking..."):
+
+            response , docs = prompt_template(question,history,st.session_state.chunks)
+        
     end_time = time.time()
-    
-    st.session_state.messages.append(
-    {
-        "role": "user",
-        "content": question
-    }
-    )
 
     sources  = metadata(docs)
+
+    streamed_text = st.write_stream(stream_text(response.content))
 
     st.session_state.messages.append(
     {
         "role": "assistant",
-        "content": response.content,
+        "content": streamed_text,
         "sources": sources,
         "tokens": response.usage_metadata,
         "total_time": round(end_time - start_time, 2)
@@ -175,12 +161,32 @@ if files:
         )
 
     if valid_files:
-        if st.button("Process Files"):
+
+        col1,col2 = st.columns(2)
+
+        with(col1):
+            if st.button("Process Files"):
+                
+                process_documents(valid_files)
+                
+        with(col2):
+            if st.button("Reset all"):
+    
+                if os.path.exists("vector_db"):
+                    shutil.rmtree("vector_db")
+                
+                if os.path.exists("temp"):
+                    shutil.rmtree("temp")
+    
+                st.session_state.clear()
+    
+                st.rerun()
             
-            process_documents(valid_files)
     else:
 
         st.warning("Please upload at least one supported document.")
+
+    
 
 
 st.divider()
@@ -188,26 +194,42 @@ st.divider()
 
 if st.session_state.processed:
 
+    display_chat()
+
+    history = st.session_state.messages[-6:]
     
     question = st.chat_input("Enter your Question:")
 
     if question:
+        
+        st.session_state.messages.append(
+            {
+            "role": "user",
+            "content": question
+            }
+        )
+        with st.chat_message("user"):
+            st.write(question)
        
         try:
             
-            generate_response(question)
+            generate_response(question , history)
             
+        
+        except ChatGoogleGenerativeAIError as e:
+            
+            st.error(
+        "Gemini API quota exhausted.\n\n"
+        "Please wait before retrying."
+            )
+
         except Exception as e:
-            
-            if "quota" in str(e).lower():
 
-                st.error("Gemini API quota exhausted. This application currently uses the free tier.")
+            st.exception(e)
 
-            else:
+    # st.rerun()
 
-                st.exception(e)
-
-    display_chat()
+    
 else:
 
     st.info("Upload documents and click 'Process Files' to begin.")
