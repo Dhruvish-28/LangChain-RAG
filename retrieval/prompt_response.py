@@ -56,4 +56,4 @@ Question:
 
     response = llm.invoke(prompt)
 
-    return response
+    return response , docs
