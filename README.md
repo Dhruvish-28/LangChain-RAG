@@ -8,6 +8,9 @@ Unlike a basic RAG implementation, this project combines multiple retrieval tech
 
 # Demo
 
+###Video
+![Video Demo](results/Video.gif)
+
 ### Application Interface
 ![Application interface](results/UI.png)
 
