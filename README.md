@@ -263,11 +263,11 @@ Embedding Dimension:
 
 FAISS
 
-##Index Type:
+Index Type:
 
 Flat Index (LangChain FAISS)
 
-##Similarity Metric:
+Similarity Metric:
 
 Cosine Similarity
 (L2 normalization performed internally)
