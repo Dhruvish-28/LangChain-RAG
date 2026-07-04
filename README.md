@@ -294,31 +294,30 @@ Streamlit
 
 ---
 
-# Project Structure
+## Project Structure
 
-```
+```text
 Advanced-Hybrid-RAG/
-
 │
-├── ingestion/
-│   ├── loaders.py
-│   ├── splitter.py
-│   ├── embeddings.py
-│   └── embedding_model.py
+├── ingestion/                     # Document ingestion pipeline
+│   ├── loaders.py                 # Multi-format document loaders
+│   ├── splitter.py                # Text chunking
+│   ├── embeddings.py              # Embedding generation
+│   └── embedding_model.py         # HuggingFace embedding model
 │
-├── retrieval/
-│   ├── retriever.py
-│   ├── prompt_response.py
-│   └── ensemble_retriever.py
+├── retrieval/                     # Retrieval pipeline
+│   ├── retriever.py               # History-aware retrieval
+│   ├── prompt_response.py         # Prompt construction & response generation
+│   └── ensemble_retriever.py      # Hybrid (FAISS + BM25 + Reranker)
 │
 ├── models/
-│	├── llm_model.py
-│	├── transformer.py
+│   ├── llm_model.py               # Gemini LLM configuration
+│   └── transformer.py             # CrossEncoder reranker
 │
-├── UI.py
-├── requirements.txt
-├── README.md
-└── .gitignore
+├── UI.py                          # Streamlit application
+├── requirements.txt               # Python dependencies
+├── README.md                      # Project documentation
+└── .gitignore                     # Git ignore rules
 ```
 
 ---
