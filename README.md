@@ -42,7 +42,7 @@ This project allows users to upload multiple documents and chat with them natura
 
 Instead of relying solely on semantic similarity, the system combines:
 
-- Dense Retrieval (FAISS HNSW)
+- Dense Retrieval (FAISS Index)
 - Sparse Retrieval (BM25)
 - Maximum Marginal Relevance (MMR)
 - History-aware Query Reformulation
@@ -71,7 +71,7 @@ Multiple documents can be uploaded simultaneously.
 
 Instead of relying on a single retriever, the project combines:
 
-- FAISS HNSW Vector Search
+- FAISS Vector Search
 - BM25 Keyword Search
 - Maximum Marginal Relevance (MMR)
 
@@ -159,7 +159,7 @@ Gracefully handles:
 
 - Unsupported file formats
 - Empty document uploads
-- Gemini API quota exhaustion
+- Gemini Resource exhaustion
 - Processing failures
 
 ---
@@ -191,7 +191,7 @@ with a single click.
              HuggingFace Embeddings
                          │
                          ▼
-              FAISS HNSW Vector Index
+              	FAISS Vector Index
                          │
                          ▼
                  Hybrid Retrieval
@@ -222,7 +222,7 @@ with a single click.
 2. Process documents.
 3. Split documents into chunks.
 4. Generate embeddings.
-5. Build FAISS HNSW index.
+5. Build FAISS index.
 6. Create BM25 retriever.
 7. Combine retrievers.
 8. Reformulate follow-up queries.
@@ -265,21 +265,14 @@ FAISS
 
 Index Type:
 
-HNSW (Hierarchical Navigable Small World)
+Flat Index (LangChain FAISS)
 
-Parameters:
-
-```
-M = 32
-efConstruction = 200
-efSearch = 100
 ```
 
 Similarity Metric:
 
 Cosine Similarity
-
-(L2 normalization + Inner Product)
+(L2 normalization performed internally)
 
 ---
 
@@ -311,13 +304,16 @@ Advanced-Hybrid-RAG/
 │   ├── loaders.py
 │   ├── splitter.py
 │   ├── embeddings.py
-│   └── vector_store.py
+│   └── embedding_model.py
 │
 ├── retrieval/
 │   ├── retriever.py
-│   ├── reranker.py
 │   ├── prompt_response.py
-│   └── llm_model.py
+│   └── ensemble_retriever.py
+│
+├── models/
+│	├── llm_model.py
+│	├── transformer.py
 │
 ├── UI.py
 ├── requirements.txt
@@ -366,78 +362,6 @@ Run
 ```bash
 streamlit run UI.py
 ```
-
----
-
-# Supported File Types
-
-- PDF
-- DOCX
-- TXT
-- Markdown
-
----
-
-# Retrieval Techniques
-
-## Dense Retrieval
-
-Semantic search using HuggingFace embeddings and FAISS HNSW.
-
----
-
-## MMR
-
-Improves diversity by avoiding redundant chunks.
-
----
-
-## BM25
-
-Improves lexical retrieval for exact keywords.
-
----
-
-## History-Aware Retrieval
-
-Uses previous conversation to rewrite ambiguous follow-up questions.
-
----
-
-## Cross-Encoder Reranker
-
-Scores retrieved chunks using a Cross-Encoder before sending them to the LLM.
-
----
-
-# Prompt Engineering
-
-The prompt instructs Gemini to:
-
-- answer only from retrieved context
-- avoid hallucinations
-- respond concisely
-- state when information is unavailable
-
----
-
-# Conversation Memory
-
-Stores previous messages in session state.
-
-Only the latest conversation history is passed to the retriever and LLM to preserve context while minimizing token consumption.
-
----
-
-# Metadata Display
-
-Each answer includes:
-
-- Source document
-- Response time
-- Input tokens
-- Output tokens
-- Total tokens
 
 ---
 
