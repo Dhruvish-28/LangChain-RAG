@@ -8,7 +8,11 @@ Unlike a basic RAG implementation, this project combines multiple retrieval tech
 
 # Demo
 
-*(Add screenshots or GIFs here)*
+![Application interface](results/UI.png)
+
+![File uploads](results/file_upload.png)
+
+![Working](results/working.png)
 
 ---
 
