@@ -1,3 +1,8 @@
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)](https://langchain--rag.streamlit.app/)
+![Python](https://img.shields.io/badge/Python-3.10-blue)
+![LangChain](https://img.shields.io/badge/LangChain-Hybrid_RAG-green)
+![License](https://img.shields.io/badge/License-MIT-yellow)
+
 # Advanced Hybrid RAG Chatbot
 
 A production-style Retrieval-Augmented Generation (RAG) application built using **LangChain**, **FAISS**, **BM25**, **Cross-Encoder Reranking**, **Google Gemini 2.5 Flash**, and **Streamlit**.
@@ -5,6 +10,9 @@ A production-style Retrieval-Augmented Generation (RAG) application built using 
 Unlike a basic RAG implementation, this project combines multiple retrieval techniques, history-aware query reformulation, hybrid search, reranking, and conversation memory to provide highly relevant, context-aware answers from multiple uploaded documents.
 
 ---
+
+## 🚀 Live Demo
+https://langchain--rag.streamlit.app/
 
 # Demo
 
