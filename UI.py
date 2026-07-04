@@ -41,6 +41,12 @@ def process_documents(files):
 
         docs = files_process(files)
 
+        if not docs:
+            st.error(
+                "Failed to extract text from the uploaded file."
+            )
+            return
+
         chunks = chunking(docs)
 
         vectors(chunks)
