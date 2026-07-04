@@ -112,12 +112,14 @@ def generate_response(question, history):
         with st.spinner("Thinking..."):
 
             response , docs = prompt_template(question,history,st.session_state.chunks)
+
+        streamed_text = st.write_stream(stream_text(response.content))
         
     end_time = time.time()
 
     sources  = metadata(docs)
 
-    streamed_text = st.write_stream(stream_text(response.content))
+    
 
     st.session_state.messages.append(
     {
@@ -129,21 +131,7 @@ def generate_response(question, history):
     }
 )
 
-
-st.title("RAG Using LangChain")
-
-st.divider()
-
-st.subheader("Document Upload")
-
-files = st.file_uploader(
-    "Upload your Files",
-    # type=["pdf", "docx", "txt", "md"],
-    accept_multiple_files=True
-)
-
-
-if files:
+def process_files(files):
 
     for file in files:
 
@@ -185,52 +173,63 @@ if files:
     else:
 
         st.warning("Please upload at least one supported document.")
-
     
 
+st.title("RAG using LangChain")
 
 st.divider()
 
+if __name__ == "__main__":
 
-if st.session_state.processed:
+    files = st.file_uploader(
+    "Upload your Files",
+    # type=["pdf", "docx", "txt", "md"],
+    accept_multiple_files=True
+    )
 
-    display_chat()
+    if files:
 
-    history = st.session_state.messages[-6:]
+        process_files(files)
     
-    question = st.chat_input("Enter your Question:")
-
-    if question:
+    if st.session_state.processed:
+    
+        display_chat()
+    
+        history = st.session_state.messages[-6:]
         
-        st.session_state.messages.append(
-            {
-            "role": "user",
-            "content": question
-            }
-        )
-        with st.chat_message("user"):
-            st.write(question)
-       
-        try:
+        question = st.chat_input("Enter your Question:")
+    
+        if question:
             
-            generate_response(question , history)
-            
-        
-        except ChatGoogleGenerativeAIError as e:
-            
-            st.error(
-        "Gemini API quota exhausted.\n\n"
-        "Please wait before retrying."
+            st.session_state.messages.append(
+                {
+                "role": "user",
+                "content": question
+                }
             )
-
-        except Exception as e:
-
-            st.exception(e)
-
-    # st.rerun()
-
+            with st.chat_message("user"):
+                st.write(question)
+           
+            try:
+                
+                generate_response(question , history)
+                
+            
+            except ChatGoogleGenerativeAIError as e:
+                
+                st.error(
+            "Gemini API quota exhausted.\n\n"
+            "Please wait before retrying."
+                )
     
-else:
-
-    st.info("Upload documents and click 'Process Files' to begin.")
-    st.info("Supported formats: PDF, DOCX, TXT and MD |  Unsupported files will be discarded...")
+            except Exception as e:
+    
+                st.exception(e)
+    
+        # st.rerun()
+    
+        
+    else:
+    
+        st.info("Upload documents and click 'Process Files' to begin.")
+        st.info("Supported formats: PDF, DOCX, TXT and MD |  Unsupported files will be discarded...")
