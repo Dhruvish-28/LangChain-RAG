@@ -66,6 +66,26 @@ def stream_text(text):
         yield word + " "
 
         time.sleep(0.03)
+
+def display_metadata(message):
+
+    col1, col2, col3 = st.columns(3)
+                
+    with col1:
+        st.write("**📄 Source**")
+        st.write(", ".join(message["sources"]))
+
+    with col2:
+        st.write("**⏱ Time**")
+        st.write(f"{message['total_time']} sec")
+
+    with col3:
+        tokens = message["tokens"]
+
+        st.write("**🪙 Tokens**")
+        st.write(f"In : {tokens['input_tokens']}")
+        st.write(f"Out : {tokens['output_tokens']}")
+        st.write(f"Total : {tokens['total_tokens']}")
     
 def display_chat():
 
@@ -84,23 +104,7 @@ def display_chat():
 
                 with st.expander("Metadata"):
 
-                    col1, col2, col3 = st.columns(3)
-                
-                    with col1:
-                        st.write("**📄 Source**")
-                        st.write(", ".join(message["sources"]))
-                
-                    with col2:
-                        st.write("**⏱ Time**")
-                        st.write(f"{message['total_time']} sec")
-                
-                    with col3:
-                        tokens = message["tokens"]
-                
-                        st.write("**🪙 Tokens**")
-                        st.write(f"In : {tokens['input_tokens']}")
-                        st.write(f"Out : {tokens['output_tokens']}")
-                        st.write(f"Total : {tokens['total_tokens']}")
+                    display_metadata(message)
 
 
 def generate_response(question, history):
@@ -119,8 +123,6 @@ def generate_response(question, history):
 
     sources  = metadata(docs)
 
-    
-
     st.session_state.messages.append(
     {
         "role": "assistant",
@@ -130,6 +132,23 @@ def generate_response(question, history):
         "total_time": round(end_time - start_time, 2)
     }
 )
+    with st.expander("Metadata"):
+        col1, col2, col3 = st.columns(3)
+                    
+        with col1:
+            st.write("**📄 Source**")
+            st.write(", ".join(sources))
+    
+        with col2:
+            st.write("**⏱ Time**")
+            st.write(f"{round(end_time - start_time, 2)} sec")
+    
+        with col3:
+            tokens= response.usage_metadata
+            st.write("**🪙 Tokens**")
+            st.write(f"In : {tokens['input_tokens']}")
+            st.write(f"Out : {tokens['output_tokens']}")
+            st.write(f"Total : {tokens['total_tokens']}")
 
 def process_files(files):
 
