@@ -7,8 +7,6 @@ def vectors(chunks):
         raise ValueError(
             "No document chunks available for indexing."
         )
-    except ValueError as e:
-        st.error(str(e))
     
     vectorstore = FAISS.from_documents(
     documents=chunks,

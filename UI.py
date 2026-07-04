@@ -39,17 +39,16 @@ def process_documents(files):
 
     with st.spinner("Processing documents..."):
 
-        docs = files_process(files)
+        try:
+            docs = files_process(files)
 
-        if not docs:
-            st.error(
-                "Failed to extract text from the uploaded file."
-            )
+            chunks = chunking(docs)
+
+            vectors(chunks)
+        except ValueError as e:
+
+            st.error(str(e))
             return
-
-        chunks = chunking(docs)
-
-        vectors(chunks)
 
     st.session_state.chunks = chunks
     st.session_state.processed = True
