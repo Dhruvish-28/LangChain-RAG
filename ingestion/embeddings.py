@@ -5,7 +5,7 @@ def vectors(chunks):
 
     if len(chunks) == 0:
         raise ValueError(
-            "No document chunks available for indexing."
+            "Documents maybe not contain text (possible : scanned images)."
         )
     
     vectorstore = FAISS.from_documents(
