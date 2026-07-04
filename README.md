@@ -8,10 +8,13 @@ Unlike a basic RAG implementation, this project combines multiple retrieval tech
 
 # Demo
 
+### Application Interface
 ![Application interface](results/UI.png)
 
+### File Upload
 ![File uploads](results/file_upload.png)
 
+### Chat & Response Generation
 ![Working](results/working.png)
 
 ---
