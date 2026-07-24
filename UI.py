@@ -15,7 +15,7 @@ import time
 import os
 
 st.set_page_config(
-    page_title="RAG Using LangChain",
+    page_title="AI Assistant",
     page_icon="📄",
     layout="wide"
 )
