@@ -199,7 +199,7 @@ def process_files(files):
         st.warning("Please upload at least one supported document.")
     
 
-st.title("RAG using LangChain")
+st.title("AI Assistant")
 
 st.divider()
 
