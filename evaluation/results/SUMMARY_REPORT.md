@@ -1,7 +1,5 @@
 # RAG Evaluation Report
 
-*Generated: 2026-08-07 — LangChain RAG (MiniLM embeddings, Hybrid BM25+MMR retrieval + cross-encoder rerank)*
-
 **Headline:** The full pipeline — hybrid ensemble retrieval + neural reranking — hits **1.000 Recall@K**, **0.172 Precision@K** and **0.949 MRR** on a 33-question held-out evaluation set.
 
 ## Key Findings
