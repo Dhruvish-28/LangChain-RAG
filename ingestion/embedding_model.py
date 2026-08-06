@@ -1,9 +1,9 @@
 from langchain_huggingface import HuggingFaceEmbeddings
 
-print("Loading model...")
+@st.cache_resource
+def load_embedding_model():
+    return SentenceTransformer(
+        "sentence-transformers/all-MiniLM-L6-v2"
+    )
 
-embeddings = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-MiniLM-L6-v2"
-)
-
-print("Model loaded!")
+embeddings = load_embedding_model()
