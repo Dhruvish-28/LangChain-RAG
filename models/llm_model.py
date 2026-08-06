@@ -2,10 +2,11 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from dotenv import load_dotenv
 import os 
 from pathlib import Path
+from functools import lru_cache
 
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
-@st.cache_resource
+@lru_cache(maxsize=1)
 def load_gemini_client():
     return  ChatGoogleGenerativeAI(
     model="gemini-2.5-flash",
