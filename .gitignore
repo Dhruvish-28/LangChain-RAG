@@ -1,0 +1,14 @@
+**/.ipynb_checkpoints/
+__pycache__/
+data/
+temp/
+vector_db/
+.env
+__init__.py
+test.py
+venv/
+
+# Evaluation harness: source is tracked; regenerable artifacts are ignored
+evaluation/data/
+evaluation/results/retrieval_*.csv
+evaluation/results/evidence_*.csv
