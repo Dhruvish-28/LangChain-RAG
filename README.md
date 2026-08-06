@@ -37,6 +37,7 @@ https://langchain--rag.streamlit.app/
 - Tech Stack
 - Retrieval Pipeline
 - Project Structure
+- Evaluation
 - Installation
 - Usage
 - Metadata Display
@@ -328,11 +329,46 @@ Advanced-Hybrid-RAG/
 │   ├── llm_model.py               # Gemini LLM configuration
 │   └── transformer.py             # CrossEncoder reranker
 │
+├── evaluation/                    # Deterministic RAG evaluation harness
+│   ├── run_evaluation.py          # Entry point (benchmark + report)
+│   ├── config.py                  # Config dataclass & quick/full grids
+│   ├── report.py                  # Generates SUMMARY_REPORT.md
+│   ├── data_builder/              # Synthetic corpus + 33 ground-truth Q&As
+│   ├── core/                      # Corpus, retrievers, benchmark loop
+│   ├── metrics/                   # Recall@K, Precision@K, MRR, evidence
+│   └── results/                   # master_summary.csv + SUMMARY_REPORT.md
+│
 ├── UI.py                          # Streamlit application
 ├── requirements.txt               # Python dependencies
 ├── README.md                      # Project documentation
 └── .gitignore                     # Git ignore rules
 ```
+
+---
+
+# Evaluation
+
+A deterministic, LLM-free evaluation harness benchmarks the retrieval pipeline on a fixed 33-question dataset built from a 6-document corpus. All metrics are scored lexically against verbatim ground-truth excerpts — no LLM calls, no API keys, fully reproducible offline.
+
+```bash
+python -m evaluation.run_evaluation --quick   # ~1 min, offline
+```
+
+| Config | Recall@3 | Recall@K | MRR | Evidence Coverage | Full Evidence@K |
+| --- | --- | --- | --- | --- | --- |
+| Hybrid + rerank (500×50) | **1.000** | **1.000** | **0.949** | **1.000** | **1.000** |
+| Hybrid ensemble (500×50) | 1.000 | 1.000 | 0.904 | 1.000 | 1.000 |
+| BM25 (500×50) | 0.970 | 0.970 | 0.859 | 0.970 | 0.970 |
+| Vector (FAISS) (500×50) | 0.939 | 0.939 | 0.879 | 0.939 | 0.939 |
+| Vector + rerank (500×50) | 0.939 | 0.939 | 0.909 | 0.939 | 0.939 |
+
+**Key takeaways:**
+
+- **Reranking lifts rank quality:** MRR improves from **0.904 → 0.949** (ensemble + rerank) vs. ensemble alone.
+- **Hybrid beats single retrievers:** ensemble (`Recall@K` = 1.000) outperforms FAISS-only (0.939) and BM25-only (0.970).
+- **Perfect evidence coverage:** the full pipeline surfaces all supporting gold excerpts for every question (Full Evidence@K = 1.000).
+
+Full methodology and per-config results: [`evaluation/README.md`](evaluation/README.md) and `evaluation/results/SUMMARY_REPORT.md`.
 
 ---
 

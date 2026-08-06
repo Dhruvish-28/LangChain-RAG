@@ -1,0 +1,11 @@
+config,chunk_size,chunk_overlap,retriever_type,top_k,ensemble_k,fetch_k,bm25_weight,rerank,index_build_ms,total_retrieval_avg_ms,recall@3,recall@5,recall@top_k,precision@3,precision@top_k,mrr,evidence_coverage,top1_contains_gold,full_evidence_topk
+chunk500x50_ensemble_rerank_k6_rerank,500,50,ensemble_rerank,6,20,30,0.4,True,5366.53,254.85,1.0,1.0,1.0,0.343,0.172,0.949,1.0,0.909,1.0
+chunk500x50_ensemble_k6,500,50,ensemble,6,20,30,0.4,False,50.46,13.36,1.0,1.0,1.0,0.333,0.167,0.904,1.0,0.818,1.0
+chunk500x50_bm25_k6,500,50,bm25,6,20,30,0.4,False,50.19,0.26,0.97,0.97,0.97,0.333,0.167,0.859,0.97,0.758,0.97
+chunk500x50_vector_k6,500,50,vector,6,20,30,0.4,False,52.84,8.53,0.939,0.939,0.939,0.313,0.157,0.879,0.939,0.818,0.939
+chunk500x50_vector_rerank_k6_rerank,500,50,vector_rerank,6,20,30,0.4,True,50.85,16.38,0.939,0.939,0.939,0.313,0.157,0.909,0.939,0.879,0.939
+chunk500x50_bm25_rerank_k6_rerank,500,50,bm25_rerank,6,20,30,0.4,True,49.88,8.24,0.97,0.97,0.97,0.333,0.167,0.939,0.97,0.909,0.97
+chunk250x25_ensemble_rerank_k6_rerank,250,25,ensemble_rerank,6,20,30,0.4,True,66.84,32.21,0.879,0.879,0.879,0.293,0.152,0.813,0.879,0.758,0.879
+chunk1000x100_ensemble_rerank_k6_rerank,1000,100,ensemble_rerank,6,20,30,0.4,True,47.25,52.88,1.0,1.0,1.0,0.343,0.172,0.955,1.0,0.909,1.0
+chunk500x50_ensemble_rerank_k3_rerank,500,50,ensemble_rerank,3,20,30,0.4,True,48.46,37.83,1.0,1.0,1.0,0.343,0.343,0.949,1.0,0.909,1.0
+chunk500x50_ensemble_rerank_k10_rerank,500,50,ensemble_rerank,10,20,30,0.4,True,50.33,38.03,1.0,1.0,1.0,0.343,0.103,0.949,1.0,0.909,1.0
