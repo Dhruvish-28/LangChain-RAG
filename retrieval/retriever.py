@@ -4,17 +4,22 @@ from .ensemble_retriever import combine_retriever
 from models.llm_model import llm
 from models.transformer import reranker 
 
-def ranking(docs , question) :
-    
-    pairs = [ (question, doc.page_content) for doc in docs]
+def ranking(docs, question):
+    """Rerank documents with the cross-encoder and return (top docs, scores).
+
+    The scores are returned alongside the docs so the UI can display
+    provenance / evidence with relevance confidence.
+    """
+    pairs = [(question, doc.page_content) for doc in docs]
 
     scores = reranker.predict(pairs)
 
-    ranked = sorted( zip(scores, docs), key=lambda x: x[0], reverse=True )    
+    ranked = sorted(zip(scores, docs), key=lambda x: x[0], reverse=True)[:6]
 
-    docs = [ doc for _, doc in ranked[:6]]
+    docs = [doc for _, doc in ranked]
+    scores = [float(score) for score, _ in ranked]
 
-    return docs
+    return docs, scores
     
 def retrieve(question, history , chunks):
 
@@ -56,6 +61,6 @@ return it unchanged.
         }
     )
 
-    result = ranking(result  , question)
+    result , scores = ranking(result, question)
 
-    return result
+    return result , scores

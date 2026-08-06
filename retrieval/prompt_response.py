@@ -4,7 +4,7 @@ from models.llm_model import llm
 
 def prompt_template(question , history,chunks):
 
-    docs = retrieve(question , history , chunks)
+    docs , scores = retrieve(question , history , chunks)
 
     context = "\n\n".join( doc.page_content for doc in docs )
 
@@ -56,4 +56,4 @@ Question:
 
     response = llm.invoke(prompt)
 
-    return response , docs
+    return response , docs , scores
