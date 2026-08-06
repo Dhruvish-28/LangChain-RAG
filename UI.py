@@ -64,6 +64,16 @@ def metadata(docs):
 
     return list(sources)
 
+def truncate_preview(text, words=60):
+
+    word_list = text.split()
+
+    if len(word_list) <= words:
+
+        return text
+
+    return " ".join(word_list[:words]) + " ..."
+
 def stream_text(text):
 
     for word in text.split():
@@ -74,23 +84,35 @@ def stream_text(text):
 
 def display_metadata(message):
 
+    st.write("**📄 Source Documents**")
+    st.write(", ".join(message["sources"]))
+
+    st.divider()
+
     col1, col2, col3 = st.columns(3)
-                
+
     with col1:
-        st.write("**📄 Source**")
-        st.write(", ".join(message["sources"]))
+        st.metric("⏱ Total Time", f"{message['total_time']} sec")
 
     with col2:
-        st.write("**⏱ Time**")
-        st.write(f"{message['total_time']} sec")
+        tokens = message["tokens"]
+        st.metric("🪙 Input Tokens", tokens["input_tokens"])
 
     with col3:
         tokens = message["tokens"]
+        st.metric("🪙 Output Tokens", tokens["output_tokens"])
 
-        st.write("**🪙 Tokens**")
-        st.write(f"In : {tokens['input_tokens']}")
-        st.write(f"Out : {tokens['output_tokens']}")
-        st.write(f"Total : {tokens['total_tokens']}")
+    if message.get("evidence"):
+
+        st.divider()
+
+        st.write("**🔎 Evidence Used (Reranker Scores)**")
+
+        for i, ev in enumerate(message["evidence"], start=1):
+
+            with st.expander(f"Chunk {i} · {ev['source']} · Score : {ev['score']:.4f}"):
+
+                st.write(ev["content_preview"])
     
 def display_chat():
 
@@ -120,7 +142,7 @@ def generate_response(question, history):
         
         with st.spinner("Thinking..."):
 
-            response , docs = prompt_template(question,history,st.session_state.chunks)
+            response , docs , scores = prompt_template(question,history,st.session_state.chunks)
 
         streamed_text = st.write_stream(stream_text(response.content))
         
@@ -128,32 +150,28 @@ def generate_response(question, history):
 
     sources  = metadata(docs)
 
+    evidence = [
+        {
+            "source": os.path.basename(doc.metadata.get("source", "Unknown")),
+            "score": score,
+            "content_preview": truncate_preview(doc.page_content),
+        }
+        for doc, score in zip(docs, scores)
+    ]
+
     st.session_state.messages.append(
     {
         "role": "assistant",
         "content": streamed_text,
         "sources": sources,
+        "evidence": evidence,
         "tokens": response.usage_metadata,
         "total_time": round(end_time - start_time, 2)
     }
 )
     with st.expander("Metadata"):
-        col1, col2, col3 = st.columns(3)
-                    
-        with col1:
-            st.write("**📄 Source**")
-            st.write(", ".join(sources))
-    
-        with col2:
-            st.write("**⏱ Time**")
-            st.write(f"{round(end_time - start_time, 2)} sec")
-    
-        with col3:
-            tokens= response.usage_metadata
-            st.write("**🪙 Tokens**")
-            st.write(f"In : {tokens['input_tokens']}")
-            st.write(f"Out : {tokens['output_tokens']}")
-            st.write(f"Total : {tokens['total_tokens']}")
+
+        display_metadata(st.session_state.messages[-1])
 
 def process_files(files):
 
