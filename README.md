@@ -437,10 +437,8 @@ These enhancements significantly improve retrieval quality, contextual understan
 - OCR support for scanned PDFs
 - Table extraction
 - Image understanding with multimodal models
-- Citation highlighting inside answers
 - Persistent vector database
 - User authentication
-- Cloud deployment
 - Docker support
 
 ---
