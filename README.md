@@ -11,7 +11,7 @@ Unlike a basic RAG implementation, this project combines multiple retrieval tech
 ---
 
 ## 🚀 Live Demo
-https://langchain--rag.streamlit.app/
+https://personal-rag-sys.streamlit.app/
 
 # Demo
 
